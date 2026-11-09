@@ -1,0 +1,15 @@
+site/
+node_modules/
+**/bin/
+**/obj/
+**/.vs/
+.runtime/
+output/
+*.user
+*.log
+*.local.json
+__pycache__/
+.playwright-cli/
+
+# Local Visual Studio launch profiles may contain database credentials.
+**/Properties/launchSettings.json

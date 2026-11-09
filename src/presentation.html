@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Демонстрационный экзамен 2026 · Корочки.есть</title>
+  <link rel="stylesheet" href="presentation.css">
+  <script defer src="core.js"></script>
+  <script defer src="presentation-data.js"></script>
+  <script defer src="presentation.js"></script>
+</head>
+<body>
+  <header class="toolbar" id="toolbar">
+    <a class="control" href="./?mode=teacher">К порталу</a>
+    <strong>ДЭ 2026 · Корочки.есть</strong>
+    <nav aria-label="Действия показа">
+      <button id="contents-open" class="control" type="button">Содержание</button>
+      <button id="laser" class="control" type="button" aria-pressed="false">Указка</button>
+      <button id="full" class="control" type="button">Во весь экран</button>
+      <button id="settings-open" class="control" type="button">Ещё</button>
+      <button id="present" class="control primary" type="button">Режим показа</button>
+    </nav>
+  </header>
+  <progress id="progress" aria-label="Положение в презентации"></progress>
+  <main id="presentation">
+    <div class="frame" id="frame"></div>
+    <aside id="teacher-script" hidden aria-label="Сценарий преподавателя"></aside>
+  </main>
+  <footer class="navigation" id="navigation" aria-label="Переключение слайдов">
+    <button id="previous" class="control" type="button">Назад</button>
+    <form id="jump">
+      <label for="page-number">Слайд</label>
+      <input id="page-number" type="number" min="1" required>
+      <span id="page-total"></span>
+      <button class="control" type="submit">Перейти</button>
+    </form>
+    <button id="next" class="control primary" type="button">Вперёд</button>
+  </footer>
+  <dialog id="contents" aria-labelledby="contents-title">
+    <header><h2 id="contents-title">Содержание</h2><form method="dialog"><button class="control">Закрыть</button></form></header>
+    <nav aria-label="Переход к разделу" id="chapters"></nav>
+  </dialog>
+  <dialog id="settings" aria-labelledby="settings-title">
+    <header><h2 id="settings-title">Перед показом</h2><form method="dialog"><button class="control">Закрыть</button></form></header>
+    <form class="profile" id="profile">
+      <label>ФИО преподавателя<input name="teacher-name" maxlength="90" autocomplete="name"></label>
+      <label>Должность<input name="teacher-position" maxlength="115"></label>
+      <label>Кафедра или лаборатория<input name="teacher-department" maxlength="115"></label>
+      <button class="control primary" type="submit">Готово</button>
+    </form>
+    <div class="settings-actions">
+      <button id="theme" class="control" type="button">Тёмная тема</button>
+      <a class="control" href="materials/rvmp-2026-presentation.pdf" download>Скачать PDF</a>
+    </div>
+  </dialog>
+  <dialog id="image-viewer" aria-labelledby="image-title">
+    <header><h2 id="image-title">Снимок Windows</h2><form method="dialog"><button class="control">Закрыть</button></form></header>
+    <img alt="" id="image-preview">
+  </dialog>
+</body>
+</html>

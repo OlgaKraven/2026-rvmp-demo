@@ -1,0 +1,6 @@
+# Preserve supplied exam attachments byte for byte, including JSON line endings.
+materials/assets/** -text
+*.xlsx binary
+*.docx binary
+*.pdf binary
+*.png binary

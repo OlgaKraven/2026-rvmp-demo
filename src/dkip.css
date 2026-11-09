@@ -1,0 +1,60 @@
+.top-tools select{max-width:275px}.lesson-code{white-space:pre-wrap;overflow-wrap:anywhere;color:#eee;background:#1c2027}.microshot{margin:22px 0}.microshot img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:9px}.microshot figcaption{font-size:14px;color:var(--muted);margin-top:6px}.lesson-explanation li{margin:12px 0}.build-check{background:var(--soft);border-left:3px solid var(--red);padding:16px 20px;margin:20px 0}.source-note{overflow-wrap:anywhere}.modal-body iframe{width:100%;height:65vh;border:1px solid var(--line)}.modal-body select{max-width:100%;padding:10px}.code-preview{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}.materials-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}.settings-form label{display:flex;flex-direction:column;gap:8px;margin:18px 0}.settings-form input{padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}.deck-slide{display:grid;grid-template-columns:2fr 1fr;gap:28px;min-height:62vh;padding:24px}.deck-slide img{max-width:100%;max-height:68vh;object-fit:contain}.deck-slide h2{font-size:26px}.deck-slide pre{font-size:14px}.deck-laser{position:fixed;width:14px;height:14px;background:#f22;border:2px solid white;border-radius:50%;box-shadow:0 0 15px red;pointer-events:none;z-index:10000}.deck-controls{display:flex;gap:8px;align-items:center;padding:16px;flex-wrap:wrap}.slide-source{min-width:0;overflow:auto}.tour-dialog{max-width:650px}.sample-reading{white-space:pre-wrap;font-size:16px}.timer-card{position:static}.teacher-note{color:var(--muted);font-size:14px}.er-dialog{background:var(--paper);color:var(--ink)}.training-source select{width:100%;padding:12px}.route-heading{margin-top:20px}.image-open{padding:0;border:0;background:transparent;cursor:zoom-in;max-width:100%}.image-open img{display:block;max-width:100%}.material-text{white-space:pre-wrap}.er-launch-wrap{margin:15px 0}.course-dialog a{overflow-wrap:anywhere}.sample-reading .page{margin:24px 0;padding:16px;border:1px solid var(--line)}.deck-slide .slide-source .er-canvas{transform-origin:top left}.small{font-size:14px}.lesson-explanation p{font-size:16px}.materials-preview h3{overflow-wrap:anywhere}.site-nav .btn:nth-child(4){margin-left:auto}.screenshot-index{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:800px){.deck-slide{grid-template-columns:1fr;padding:14px}.deck-slide img{max-height:45vh}.site-nav .btn:nth-child(4){margin-left:0}.screenshot-index{grid-template-columns:1fr}.top-tools select{max-width:100%}.top-tools{width:100%}.top-tools label{flex-basis:100%}}
+@media print{.top,.site-nav,.hero,.route-sidebar,.study-controls,.route-bottom,footer{display:none}.shell{padding:0}.route-layout{display:block}.route-panel{border:0}.microshot{break-inside:avoid}}
+
+/* Keep the condition and its timer together at every viewport width. */
+.assignment-heading{justify-content:flex-start;gap:24px;max-width:1120px}
+.assignment-heading>div:first-child{flex:0 1 auto;max-width:760px}
+.assignment-heading .timer-card{order:0;width:290px;align-self:flex-start}
+.tour-dialog[open]{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:transparent;overflow:hidden;pointer-events:none;color:var(--ink)}
+.tour-dialog::backdrop{background:transparent}
+.tour-spotlight{position:fixed;border:3px solid #d52240;border-radius:8px;box-shadow:0 0 0 100vmax #0007;pointer-events:none;box-sizing:border-box}
+.tour-card{position:fixed;box-sizing:border-box;width:min(430px,calc(100vw - 16px));max-height:calc(100dvh - 16px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 36px #0005;pointer-events:auto}
+.tour-card .modal-head{padding:12px 18px}.tour-card .modal-head h2{font-size:18px}.tour-card .modal-body{padding:14px 18px}.tour-card .modal-body h3{margin:8px 0}.tour-card .modal-body p{margin:8px 0}.tour-card .button-row{margin-top:14px}
+@media(max-width:800px){.assignment-heading{flex-direction:column}.assignment-heading>div:first-child{flex:0 1 auto;max-width:100%}.assignment-heading .timer-card{width:100%}}
+
+/* Shared attempt layout: the timer is beside the brief, never inside its text. */
+.site-nav .btn[aria-current="page"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.attempt-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;grid-template-areas:"content timer";align-items:start;gap:28px;margin:24px 0}
+.attempt-content{grid-area:content;display:grid;gap:20px;min-width:0}
+.attempt-layout .assignment-heading{display:block;margin:0;max-width:none}
+.attempt-layout .assignment-heading>div:first-child{max-width:none}
+.attempt-layout .timer-card{grid-area:timer;width:100%;min-width:0;margin:0;position:sticky;top:16px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}
+.timer-hint{font-size:13px;line-height:1.5;color:var(--muted);padding:0 18px 18px;margin:0}
+.training-source{grid-template-columns:minmax(0,1fr);max-width:760px}
+.training-source label{display:grid;gap:8px;font-weight:600}
+.training-source select{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;min-height:44px}
+.training-stage-list button{display:grid;grid-template-columns:24px minmax(0,1fr);align-items:start;line-height:1.5}
+.training-stage-list button small{grid-column:2;color:var(--muted);font-size:12px}
+.training-menu-title{font-size:16px;width:100%;padding:0 10px}
+.self-check label{display:flex;align-items:flex-start;gap:10px;margin:12px 0;line-height:1.5}
+.self-check input{flex-shrink:0;margin-top:5px}
+.pause-screen,.attempt-result{padding:32px;border:1px solid var(--line);border-radius:16px;background:var(--paper);margin:24px 0;max-width:100%}
+.pause-screen{min-height:280px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;border-top:4px solid var(--red)}
+.pause-screen p{max-width:560px;line-height:1.65;color:var(--muted)}
+.pause-screen h2,.attempt-result h2{margin:12px 0;font-size:28px}
+.pause-symbol{display:grid;place-items:center;width:56px;height:56px;background:var(--route-active);border-radius:50%;font-size:28px;color:var(--red)}
+[hidden]{display:none!important}
+.btn:focus-visible,summary:focus-visible,select:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.prerequisites{margin:20px 0;border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:18px 22px;line-height:1.65}
+.prerequisites>summary{font-weight:700;cursor:pointer}
+.prerequisites h3{font-size:18px;margin:24px 0 10px}
+.prerequisites dl{display:grid;grid-template-columns:130px minmax(0,1fr);gap:10px 18px}
+.prerequisites dt{font-weight:700}.prerequisites dd{margin:0}
+.prerequisites li{margin:12px 0}.prerequisites pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:16px;background:var(--soft);color:var(--ink);border-radius:8px}
+.prerequisites .troubleshooting{padding:16px 20px;background:var(--soft);border-radius:8px}
+.prerequisites .try-yourself{border-left:3px solid var(--red);padding:8px 18px;margin-top:20px}
+.lesson-explanation details>summary{cursor:pointer;line-height:1.5;padding:10px 0}
+@media(max-width:1000px){.attempt-layout{grid-template-columns:minmax(0,1fr) 265px;gap:20px}}
+@media(max-width:800px){.attempt-layout{grid-template-columns:1fr}.attempt-layout .timer-card{position:static}.training-timer-top{display:grid;grid-template-columns:1fr auto;gap:8px 16px}.training-timer-top .eyebrow,.training-timer-top progress{grid-column:1/-1}.training-timer-top #timer-status{align-self:center}.training-timer-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px}.training-timer-controls .btn{min-height:44px}.timer-hint{padding:0 14px 14px}.training-stage-list{display:grid;grid-template-columns:1fr 1fr}.training-menu-title{grid-column:1/-1;margin:6px 0}.training-stage-list button{width:100%;min-width:0}.pause-screen{padding:24px 18px}}
+@media(max-width:480px){.training-stage-list{grid-template-columns:1fr}.prerequisites{padding:16px}.prerequisites dl{grid-template-columns:1fr;gap:4px}.prerequisites dd{margin-bottom:12px}.training-clock{font-size:30px!important}.study-controls label{width:100%;min-width:0}.study-controls select{width:100%}}
+
+/* Legible accents in both themes; keep the university red for filled controls. */
+:root{--red:#d90d23}
+body.dark{--blue:#9baeff}
+body.dark .route-step[aria-current=step],body.dark .training-stage-list button.active,body.dark .route-sidebar .route-label,body.dark .pause-symbol{color:#ff9baa}
+.banner-actions .btn.primary{background:var(--red)!important;border-color:var(--red)!important}
+
+.deck-title{display:flex;min-height:50vh;flex-direction:column;align-items:center;justify-content:center;text-align:center}.deck-title img{width:min(46%,260px);height:auto}.slide-actions ol{font-size:clamp(17px,1.5vw,23px);line-height:1.65}.slide-actions li{margin-bottom:20px}
+
+.lesson-explanation li,.build-check p,.slide-actions li{overflow-wrap:anywhere}

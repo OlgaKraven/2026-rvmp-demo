@@ -1,0 +1,12 @@
+{
+  "module": 2,
+  "database": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "database": "rvmp26_my",
+    "user": "rvmp26",
+    "password": "впишите пароль учебной базы"
+  },
+  "secret": "замените на свою длинную случайную строку",
+  "cookie": "rvmp_my"
+}
