@@ -1,3 +1,4 @@
+import {lessonConstruction} from "../content/lesson-construction.mjs";
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {stagesFor, official, stacks, tasks, criteria, stageNames, resultFiles} from '../content/course.mjs';
@@ -84,6 +85,7 @@ for (const stack of Object.keys(stacks)) {
   fs.writeFileSync(out+'/'+dir+'schema.sql',files['schema.sql']);
   const slides = Object.fromEntries(slideFiles.map(name=>['public/slides/'+name,fs.readFileSync('materials/assets/M2/'+name)]));
   const packages = php ? {} : windowsWheels(dir+'requirements.txt', stack==='postgresql'?['tzdata']:[]);
+  if (!php) fs.writeFileSync(out+'/downloads/wheels-'+stack+'.zip',ExamCore.zip(packages));
   const [admin, student] = sampleHashes[php ? 'php' : 'python'];
   const seed = seedTemplate.replace('__ADMIN_HASH__', () => admin).replace('__STUDENT_HASH__', () => student);
   const populated = ['-- Импортируйте в новую пустую учебную базу UTF-8.', files['schema.sql'].trim(), seed].join('\n\n');
@@ -185,7 +187,8 @@ const screens = Object.fromEntries(Object.keys(stacks).map(stack=>[stack,Object.
     return file?[[id,{file,caption}]]:[];
   })
 )]));
-const data = {official,stacks,stages,tasks,criteria,stageNames,resultFiles,kimAssignments,kimPreviewPages,previews,code,codeDescriptions,practiceVariants,launchGuide,
+const lessonCode = Object.fromEntries(Object.keys(stacks).map(stack=>[stack,lessonConstruction(stack,code,codeDescriptions)]));
+const data = {lessonCode,official,stacks,stages,tasks,criteria,stageNames,resultFiles,kimAssignments,kimPreviewPages,previews,code,codeDescriptions,practiceVariants,launchGuide,
   screens};
 fs.writeFileSync(`${out}/presentation-data.js`,'globalThis.EXAM_PRESENTATION='+JSON.stringify(buildPresentation(data))+';');
 fs.writeFileSync(`${out}/content.js`,'globalThis.COURSE='+JSON.stringify(data)+';');

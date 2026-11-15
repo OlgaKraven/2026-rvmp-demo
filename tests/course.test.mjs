@@ -65,7 +65,9 @@ test('Flask and MySQL use the Python connector, MySQL schema and their own guide
   const stack='python-mysql';
   const steps=course.stages[stack].flatMap(stage=>stage.steps).flatMap(step=>step.actions).join(' ');
   assert.match(steps,/phpMyAdmin/);
-  assert.match(steps,/app\.py и найдите def connect_db.*из mysql\.connector/);
+  const app = course.lessonCode[stack].connect.find(block => block.file==='app.py');
+  assert.match(app.text,/from mysql\.connector import/);
+  assert.match(app.text,/def connect_db/);
   assert.doesNotMatch(steps,/PDO|psycopg/);
   assert.match(course.code['examples/'+stack+'/schema.sql'],/AUTO_INCREMENT/);
   assert.match(course.code['examples/'+stack+'/app.py'],/from mysql\.connector import/);

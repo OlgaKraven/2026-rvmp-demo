@@ -180,9 +180,7 @@ function lessonActions(actions, withEr) {
 
 
 function explain(step, withEr) {
-  const file=step.file && 'examples/'+stack+'/'+step.file;
   const resources = (step.resources || []).map(resource => {
-    if (resource === 'example') return `<li><a href="downloads/example-${E(stack)}.zip" download>Рабочий портал · ZIP</a></li>`;
     if (resource === 'kim') return `<li>${link('КИМ · стр. 32', 'materials/kim-2026.pdf#page=32')}</li>`;
     if (resource === 'archive') return '<li><a href="materials/sample.zip" download>Приложения · ZIP</a></li>';
     if (resource === 'drawio') return `<li>${link('Открыть draw.io','https://app.diagrams.net/')}</li>`;
@@ -191,11 +189,16 @@ function explain(step, withEr) {
   }).join('');
   return `<section class="lesson-explanation">
     ${resources?`${withEr?'<h3>Материалы шага</h3>':''}<ul class="lesson-resources" aria-label="Материалы шага">${resources}</ul>`:''}
-    ${file && Object.hasOwn(D.code,file)?btn('Открыть '+E(step.file),`type="button" data-code="${E(file)}" aria-haspopup="dialog"`):''}
     <h3>Что сделать</h3>
     ${step.actionGroups
       ? step.actionGroups.map(group=>`<section class="lesson-action-group"><h4>${E(group.title)}</h4>${lessonActions(group.actions,withEr)}${group.shot?shot(group):''}</section>`).join('')
       : lessonActions(step.actions,withEr)}
+    ${(D.lessonCode[stack][step.build]??[]).map(({file,placement,text,purpose})=>`<details class="lesson-code-block">
+      <summary>${E(file)}</summary>
+      <p>${E(placement)} ${E(purpose)}</p>
+      <div class="lesson-code-toolbar">${btn('Копировать код','type="button" data-copy-lesson-code')}</div>
+      <pre class="lesson-code" tabindex="0">${E(text)}</pre>
+    </details>`).join('')}
     ${step.code?`<div class="lesson-code-block">
       <div class="lesson-code-toolbar"><span>${E(step.codeLabel||'Код')}</span>${btn('Копировать код','type="button" data-copy-lesson-code')}</div>
       <pre class="lesson-code" tabindex="0">${E(step.code)}</pre>
@@ -229,7 +232,7 @@ function lessonHelp(foundation) {
   const glossary = entries=>`<dl class="lesson-glossary">${entries.map(([term,definition])=>
     `<div><dt>${E(term)}</dt><dd>${Array.isArray(definition)?definition.map(line=>`<p>${E(line)}</p>`).join(''):E(definition)}</dd></div>`).join('')}</dl>`;
   const topics = [
-    ['summary','Объяснение',`<h3 id="lesson-help-title">${E(title)}</h3><p class="lesson-help-intro">${E(summary)}</p><p><strong>Результат этапа.</strong> ${E(current().output)}</p><p><a href="downloads/example-${E(stack)}.zip" download>Скачать рабочий пример выбранного стека</a></p>`],
+    ['summary','Объяснение',`<h3 id="lesson-help-title">${E(title)}</h3><p class="lesson-help-intro">${E(summary)}</p><p><strong>Результат этапа.</strong> ${E(current().output)}</p>`],
     ['example',exampleTitle,`<h3>${E(exampleTitle)}</h3>${example.split('\n').map(line=>`<p>${E(line)}</p>`).join('')}`],
     ...(csvExport ? [['csv-export','CSV через Excel',`<h3>${E(csvExport.title)}</h3><p>${E(csvExport.intro)}</p>
       ${procedure(csvExport.steps)}
@@ -319,7 +322,7 @@ function lessonBrief(lesson) {
   if(taskIndex<0){
     const files=D.previews.filter(file=>!file.task);
     return `${conditionText(taskParagraphs(lesson.goal))}
-      <p><a href="preparation.html">0. Установка и настройка программ</a> · <a href="preparation.html#faq">ЧаВО об экзамене</a></p>
+      <p><a href="learning-preparation.html">0. Установка и настройка программ</a> · <a href="learning-preparation.html#faq">ЧаВО об экзамене</a></p>
       <section class="task-files"><h3>Исходные документы</h3><ul>${documentItems(files)}</ul></section>
       ${sources()}`;
   }
@@ -329,7 +332,7 @@ function lessonBrief(lesson) {
 return `
 
     ${conditionText(original.paragraphs)}
-    ${lesson.id==='M1'?`<p><a href="preparation.html#${stack==='mysql'?'php':'python'}">Библиотеки и запуск без интернета</a></p>`:''}
+    ${lesson.id==='M1'?`<p><a href="learning-preparation.html#${stack==='mysql'?'php':'python'}">Библиотеки и запуск без интернета</a></p>`:''}
     <section class="task-files"><h3>Приложения</h3>
       <ul><li>${assignmentAttachment(taskIndex,original.attachment)}</li>
         </ul>
