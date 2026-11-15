@@ -16,7 +16,7 @@ const toolIcons = {
   sun: 'M17.5 12a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0ZM11 1h2v3h-2zm0 19h2v3h-2zM1 11h3v2H1zm19 0h3v2h-3zM3.5 4.9l1.4-1.4L7 5.6 5.6 7zm13.5 13.5 1.4-1.4 2.1 2.1-1.4 1.4zm0-12.8 2.1-2.1 1.4 1.4L18.4 7zM3.5 19.1 5.6 17 7 18.4l-2.1 2.1z',
   tour: 'M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm4.7 5.3-7 2.4-2.4 7 7-2.4z'
 };
-let mode=p.get('mode')||get('mode','overview'),stack=p.get('stack')||get('stack','mysql'),stage=p.get('module')||p.get('stage')||get('stage','documents'),task=0,dark=get('dark',false);
+let mode=p.get('mode')||'overview',stack=p.get('stack')||get('stack','mysql'),stage=p.get('module')||p.get('stage')||get('stage','documents'),task=0,dark=get('dark',false);
 if(!D.stages[stack])stack='mysql';if(mode==='criteria')mode='overview';if(!modes.some(m=>m[0]===mode))mode='learn';if(!D.stages[stack].some(s=>s.id===stage))stage='documents';
 const exampleStackFrom = query => query.get('exampleStack') || query.get('stack');
 let exampleStack = mode==='examples' ? exampleStackFrom(p) || get('example-stack') : get('example-stack');
@@ -1047,7 +1047,7 @@ function pageUrl(pageMode) {
  const examples = pageMode==='examples' ? '&exampleStack='+selectedExampleStack() : '';
  return '?section=work&mode='+pageMode+'&module='+stage+'&stack='+stack+'&view='+learningView+examples+(pageMode==='mock'?'&variant='+variantId:'');
 }
-function render({preserveScroll=true}={}){const previousScroll=window.scrollY;task=Math.min(D.tasks.length-1,Math.max(0,get('task:'+key(),0)));document.body.classList.toggle('dark',dark);if(!document.querySelector('.tour-dialog[open]')){set('mode',mode);set('stage',stage);
+function render({preserveScroll=true}={}){const previousScroll=window.scrollY;task=Math.min(D.tasks.length-1,Math.max(0,get('task:'+key(),0)));document.body.classList.toggle('dark',dark);if(!document.querySelector('.tour-dialog[open]')){set('stage',stage);
   if(mode==='learn'&&isLessonView(learningView)){
    set(stageProgressKey(),stage);
    set(lessonViewKey(stage),learningView);
