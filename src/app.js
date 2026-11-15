@@ -319,6 +319,7 @@ function lessonBrief(lesson) {
   if(taskIndex<0){
     const files=D.previews.filter(file=>!file.task);
     return `${conditionText(taskParagraphs(lesson.goal))}
+      <p><a href="preparation.html">0. Установка и настройка программ</a> · <a href="preparation.html#faq">ЧаВО об экзамене</a></p>
       <section class="task-files"><h3>Исходные документы</h3><ul>${documentItems(files)}</ul></section>
       ${sources()}`;
   }
@@ -328,6 +329,7 @@ function lessonBrief(lesson) {
 return `
 
     ${conditionText(original.paragraphs)}
+    ${lesson.id==='M1'?`<p><a href="preparation.html#${stack==='mysql'?'php':'python'}">Библиотеки и запуск без интернета</a></p>`:''}
     <section class="task-files"><h3>Приложения</h3>
       <ul><li>${assignmentAttachment(taskIndex,original.attachment)}</li>
         </ul>
@@ -611,11 +613,14 @@ function examples() {
     <div class="example-grid">
       <article class="route-panel">
         <h2>Рабочий портал</h2>
-        <p>В архиве исходники портала, схема базы, изображения и порядок запуска в Windows.</p>
+        <p>В архиве есть исходники, заполненная база и порядок запуска в Windows.${activeStack==='mysql'?'':' Библиотеки Flask и драйвер СУБД лежат в папке wheels.'}</p>
         <div class="example-actions">
           <a class="btn primary" href="downloads/example-${E(activeStack)}.zip" download>Скачать ZIP</a>
           ${btn('Как использовать','type="button" id="example-launch" aria-haspopup="dialog"')}
         </div>
+        <h3>Проверьте запуск готового примера</h3>
+        <p>Распакуйте ZIP, импортируйте <code>database-filled.sql</code> в пустую базу и заполните <code>config.local.json</code>. Подробнее в инструкции рядом с ZIP.</p>
+        <p>Откройте портал, войдите как <code>student01</code> и <code>Admin</code> и проверьте заявки под обеими ролями.</p>
       </article>
       <article class="route-panel">
         <h2>Внутри проекта</h2>
@@ -687,11 +692,10 @@ function showMockData() {
 }
 
 function openExampleInstructions() {
-  const dialog=modal('Порядок работы · '+D.stacks[selectedExampleStack()].name);
-  const path='examples/'+selectedExampleStack()+'/Порядок работы.md';
-  const steps=D.code[path].split('\n').filter(line=>/^\d+\. /.test(line));
-  dialog.querySelector('.modal-body').innerHTML=conditionText(steps);
-
+  const stack = selectedExampleStack();
+  const dialog=modal('Порядок работы · '+D.stacks[stack].name);
+  const guide=D.launchGuide[stack==='mysql'?'php':'python'];
+  dialog.querySelector('.modal-body').innerHTML=D.launchGuide.database+guide;
 }
 
 function fileModal(file, fileStack=stack) {

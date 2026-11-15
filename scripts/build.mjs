@@ -5,6 +5,7 @@ import {variants} from '../content/variants.mjs';
 import {buildPresentation} from '../content/presentation.mjs';
 import {model} from '../content/model.mjs';
 import {buildErLayouts} from './er-layout.mjs';
+import {windowsWheels} from './offline-wheels.mjs';
 import '../src/core.js';
 
 const out = 'site';
@@ -31,6 +32,17 @@ if(kimPreviewPages.length!==47)throw new Error('Ожидаются все 47 с�
 const code = {};
 const codeDescriptions = {};
 const shared = 'examples/shared/';
+const seedTemplate = read(shared+'demo-data.sql');
+const sampleHashes = {
+  php: ['$2y$10$9x2z85HLThEB0AMpIejlMO90axnRDmrwlZhK1kIRDdyaly6kV37kW',
+    '$2y$10$jQb.6ioAKbl3d.Vf7c3.nOmwK4YZoweFJqHnmjYpUclF6K4r3SyPG'],
+  python: ['pbkdf2:sha256:600000$nqhMcq6EOlyUZrrQ$ec0fc79e72dac676eba9071cfab6073d021421348c2d67f4ce484ee3902c9056',
+    'pbkdf2:sha256:600000$w4T6HCP7elryoK7U$e745a4f10144d1decb68e4a13a3f24a3ad5d0ea266d689a43b3a439e00c2a72e'],
+};
+const preparation = read('src/preparation.html');
+const launchGuide = Object.fromEntries(['database','php','python'].map(id=>[
+  id, preparation.match(new RegExp(`  <section id="${id}">([\\s\\S]*?)\\n  </section>`))[1],
+]));
 const slideFiles = fs.readdirSync('materials/assets/M2').sort().filter(name=>/^image0[1-4]\./.test(name));
 const descriptions = {
   'courses.json':'Три курса из условия модуля 2 для формы и серверной проверки.',
@@ -71,7 +83,14 @@ for (const stack of Object.keys(stacks)) {
   fs.mkdirSync(out+'/'+dir,{recursive:true});
   fs.writeFileSync(out+'/'+dir+'schema.sql',files['schema.sql']);
   const slides = Object.fromEntries(slideFiles.map(name=>['public/slides/'+name,fs.readFileSync('materials/assets/M2/'+name)]));
-  fs.writeFileSync(`${out}/downloads/example-${stack}.zip`,ExamCore.zip({'.gitignore':'config.local.json\n__pycache__/\n.venv/\n.vs/\n',...files,...slides}));
+  const packages = php ? {} : windowsWheels(dir+'requirements.txt', stack==='postgresql'?['tzdata']:[]);
+  const [admin, student] = sampleHashes[php ? 'php' : 'python'];
+  const seed = seedTemplate.replace('__ADMIN_HASH__', () => admin).replace('__STUDENT_HASH__', () => student);
+  const populated = ['-- Импортируйте в новую пустую учебную базу UTF-8.', files['schema.sql'].trim(), seed].join('\n\n');
+  fs.writeFileSync(`${out}/downloads/example-${stack}.zip`,ExamCore.zip({
+    '.gitignore':'config.local.json\n__pycache__/\n.venv/\n.vs/\n',...files,...slides,...packages,
+    'preparation.html':preparation, 'database-filled.sql':populated,
+  }));
 }
 
 const practiceVariants = {};
@@ -166,7 +185,7 @@ const screens = Object.fromEntries(Object.keys(stacks).map(stack=>[stack,Object.
     return file?[[id,{file,caption}]]:[];
   })
 )]));
-const data = {official,stacks,stages,tasks,criteria,stageNames,resultFiles,kimAssignments,kimPreviewPages,previews,code,codeDescriptions,practiceVariants,
+const data = {official,stacks,stages,tasks,criteria,stageNames,resultFiles,kimAssignments,kimPreviewPages,previews,code,codeDescriptions,practiceVariants,launchGuide,
   screens};
 fs.writeFileSync(`${out}/presentation-data.js`,'globalThis.EXAM_PRESENTATION='+JSON.stringify(buildPresentation(data))+';');
 fs.writeFileSync(`${out}/content.js`,'globalThis.COURSE='+JSON.stringify(data)+';');

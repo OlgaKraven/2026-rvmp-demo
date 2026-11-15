@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Подготовка к ДЭ · РВМП 2026</title>
+<style>
+  body { max-width: 60rem; margin: 2rem auto; padding: 0 1.25rem; font: 1rem/1.65 system-ui, sans-serif; color-scheme: light dark; }
+  section { margin-block: 2rem; }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  summary { cursor: pointer; font-weight: 600; }
+</style>
+<main>
+  <h1>0. Установка и настройка программ</h1>
+  <ol>
+    <li>Скачайте <a href="https://update.code.visualstudio.com/latest/win32-x64-user/stable">VS Code для Windows x64</a> и <a href="https://git-scm.com/install/windows">Git for Windows</a>. Разрешите запуск Git из командной строки. В новом окне PowerShell выполните <code>git --version</code>.</li>
+    <li>Если выбрали PHP или Flask с MySQL, скачайте <a href="https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe/download">XAMPP для Windows</a>. Включите Apache и MySQL (MariaDB) в XAMPP Control Panel и откройте <code>http://localhost/phpmyadmin</code>. Запишите фактический порт MySQL, обычно 3306.</li>
+    <li>Если выбрали Flask с PostgreSQL, скачайте <a href="https://www.postgresql.org/download/windows/">PostgreSQL с pgAdmin для Windows</a>. В установщике оставьте PostgreSQL Server и pgAdmin. Запишите пароль <code>postgres</code> и порт, обычно 5432. Проверьте подключение к локальному серверу в pgAdmin.</li>
+    <li>Для обоих вариантов Flask скачайте <a href="https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe">Python 3.12 для Windows x64</a>. Включите Python Launcher и pip. Проверьте <code>py -3.12 --version</code>. Пакеты <code>wheels</code> из ZIP подготовлены для этой версии и архитектуры.</li>
+    <li>Для ER скачайте <a href="https://github.com/jgraph/drawio-desktop/releases/latest">diagrams.net Desktop</a> (Windows installer) или используйте ERD Tool в pgAdmin либо Designer в phpMyAdmin. Проверьте экспорт в PDF и распакуйте ZIP целиком через «Извлечь всё».</li>
+  </ol>
+  <section id="database">
+    <h2>Импорт заполненной базы</h2>
+    <p>Создайте новую пустую базу UTF-8. Для MySQL выберите её в phpMyAdmin → «Импорт» → <code>database-filled.sql</code> из ZIP. Для PostgreSQL выберите базу в pgAdmin → Query Tool → Open File → <code>database-filled.sql</code> → Execute script. Сверьте таблицы: в <code>users</code> две записи, в <code>applications</code> две заявки, в <code>reviews</code> один отзыв.</p>
+    <p>Для входа используйте <code>Admin / KorokNET</code> и <code>student01 / Training2026</code>. Открывайте ZIP своего стека: PHP и Python используют разные форматы хешей паролей. В настройках <code>module: 2</code> открывает полную версию с ограничениями модуля 2. Для репетиции первого модуля задайте <code>module: 1</code> и используйте ту же учебную базу.</p>
+  </section>
+  <section id="python">
+    <h2>Flask без интернета</h2>
+    <ol>
+      <li>Скопируйте <code>config.example.json</code> в <code>config.local.json</code>. Укажите хост, порт, имя базы, пользователя и его пароль. В MySQL имя базы указывается в <code>database</code>, в PostgreSQL — в <code>dbname</code>. В поле <code>secret</code> задайте собственную длинную случайную строку.</li>
+      <li>Откройте PowerShell в распакованной папке рядом с <code>app.py</code>. Установите зависимости из ZIP и запустите сервер:</li>
+    </ol>
+    <pre><code>py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --no-index --find-links .\wheels -r requirements.txt
+.\.venv\Scripts\python.exe app.py</code></pre>
+    <p>Откройте <code>http://127.0.0.1:8213</code> для MySQL или <code>http://127.0.0.1:8212</code> для PostgreSQL. Войдите под двумя ролями, проверьте список заявок и сохранённый отзыв.</p>
+    <h3>Как скачать пакеты к своему проекту</h3>
+    <p>До отключения сети скопируйте <code>wheels</code> и <code>requirements.txt</code> из подходящего архива или на подключённом ПК выполните <code>py -3.12 -m pip download --only-binary=:all: -r requirements.txt -d wheels</code>. В новом проекте создайте свою <code>.venv</code> и повторите установку с <code>--no-index</code>. В VS Code при наличии расширения Python выберите <code>.venv\Scripts\python.exe</code> через Python: Select Interpreter. Если пакета нет, проверьте, что выбрали комплект нужной СУБД и x64 Python 3.12.</p>
+  </section>
+  <section id="php">
+    <h2>PHP без интернета</h2>
+    <p>В XAMPP нужны расширения <code>pdo_mysql</code> и <code>mbstring</code>. Проверьте их командой <code>&amp; C:\xampp\php\php.exe -m</code>. При необходимости включите их в <code>C:\xampp\php\php.ini</code> и перезапустите Apache. Пример использует стандартные расширения PHP, поэтому Composer не требуется.</p>
+    <p>Скопируйте <code>config.example.json</code> в <code>config.local.json</code> рядом с <code>public</code>. Укажите порт и реквизиты новой базы. В PowerShell из папки проекта выполните:</p>
+    <pre><code>$env:RVMP_PHP_CONFIG = (Resolve-Path .\config.local.json).Path
+&amp; C:\xampp\php\php.exe -S 127.0.0.1:8211 -t public</code></pre>
+    <p>Откройте <code>http://127.0.0.1:8211</code>. Если используете Apache из XAMPP, сохраните настройки подключения в <code>C:\xampp\rvmp-php-config.json</code> вне общедоступной папки. Порядок запуска через Apache есть в <code>Порядок работы.md</code> внутри ZIP.</p>
+  </section>
+  <section id="faq">
+    <h2>ЧаВО об экзамене</h2>
+    <details><summary>Сколько модулей и что сдавать?</summary><p>КОД 09.02.07-3-2026 содержит два модуля по 90 минут. Для первого подготовьте ER, SQL и работающий портал. Для второго доработайте этот же портал. Состав файлов и папку сдачи уточните на инструктаже.</p></details>
+    <details><summary>Будет ли интернет?</summary><p>КИМ, с. 23, описывает рабочие места в локальной сети без доступа в интернет. Установите ПО заранее, скачайте библиотеки и повторите запуск без сети.</p></details>
+    <details><summary>Можно ли взять готовый ZIP, флешку или свои пакеты?</summary><p>ZIP предназначен для домашней репетиции. На экзамене используйте разрешённые организаторами программы, файлы, справочники и носители. Узнайте заранее, где будут исходные материалы, пакеты и доступ к базе.</p></details>
+    <details><summary>Что делать при техническом сбое?</summary><p>Сообщите эксперту номер места, действие и точное сообщение об ошибке. Дождитесь указаний по продолжению. Дома проверьте, запущена ли служба СУБД и совпадает ли её порт в настройках приложения.</p></details>
+    <details><summary>Как проверить результат перед сдачей?</summary><p>Проверьте, что пользователь видит свои заявки, администратор может сменить статус, а отзыв доступен по условиям задания. Откройте сохранённые PDF, SQL и папку проекта.</p></details>
+  </section>
+</main>
+</html>
