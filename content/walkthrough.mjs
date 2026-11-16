@@ -3,14 +3,21 @@ export function walkthrough(stack) {
   const pg = stack === 'postgresql';
   const database = pg ? 'pgAdmin' : 'phpMyAdmin';
   const config = php ? 'C:\\xampp\\rvmp-php-config.json' : 'config.local.json';
-  const address = php ? 'http://localhost:8080/rvmp-php/public/index.html' : `http://127.0.0.1:${pg?8212:8213}/`;
+  const address = php ? 'http://localhost/rvmp-php/public/index.html' : `http://127.0.0.1:${pg?8212:8213}/`;
   const server = php ? 'public/api.php' : 'portal.py';
   const forms = php ? 'forms.php' : 'forms.py';
   return {
+    install: [
+      'Откройте список установщиков для выбранного стека. Установите VS Code и Git for Windows. Откройте PowerShell и выполните git --version.',
+      php ? 'Установите XAMPP. В панели включите Apache и MySQL. Запишите порты из колонки Port(s), откройте phpMyAdmin и проверьте расширения PDO и mbstring.'
+        : pg ? 'Установите Python 3.12 x64, PostgreSQL и pgAdmin. Откройте pgAdmin и подключитесь к своему серверу. Запишите его порт и пользователя.'
+          : 'Установите Python 3.12 x64 и XAMPP. В панели включите Apache и MySQL, затем откройте phpMyAdmin. Запишите порт MySQL. Apache нужен для phpMyAdmin, Flask запускается из терминала.',
+      ...(php ? [] : ['Выполните py -3.12 --version. Со страницы установки скачайте ZIP библиотек именно своего драйвера. Распакуете его позднее в папку проекта.'])
+    ],
     setup: [
-      'Выберите стек и подготовьте программы по разделу 0. Откройте свой редактор и клиент базы.',
+      'В Проводнике включите отображение расширений файлов. Создаваемые .json, .py и .php не должны оканчиваться на .txt.',
       php ? 'Создайте C:\\xampp\\htdocs\\rvmp-php, внутри создайте public. В XAMPP запустите Apache и MySQL. Запишите порт Apache и MySQL.'
-        : 'Откройте свою папку «Проект» и создайте public. Скачайте только набор библиотек для своего драйвера по разделу 0 и распакуйте wheels рядом с public.',
+        : 'Откройте свою папку «Проект» и создайте public. Распакуйте скачанный по разделу 0 набор библиотек так, чтобы папка wheels находилась рядом с public.',
       'Создайте .gitignore в корне проекта по карточке. Включите отображение расширений файлов в Проводнике и проверьте, что к имени не добавилось .txt.'
     ],
     connect: [
@@ -19,25 +26,25 @@ export function walkthrough(stack) {
       ...(pg ? ['Для отдельной схемы в выданной базе укажите имя выданной базы в dbname. Внутри database добавьте поле "options": "-c search_path=korochki_2026", отделив его запятой.'] : []),
       php ? 'Проверьте порт Apache в XAMPP. Настройки с паролем держите вне папки htdocs.'
         : 'Установите библиотеки и запустите сервер командами из карточки. После правки Python-файлов остановите сервер через Ctrl+C и повторите команду запуска.',
-      `Откройте ${address} для проверки HTML. Затем откройте адрес API из карточки и сверьте ответ. Для Apache подставьте свой порт.`
+      `Откройте ${address} для проверки HTML. Затем откройте адрес API из карточки и сверьте ответ. Для Apache с портом, отличным от 80, добавьте к localhost двоеточие и номер порта.`
     ],
     columns: [
       pg ? 'В pgAdmin выберите базу → Schemas → ваша схема → Tables. В отдельной базе обычно выбирают public. Щёлкните Tables правой кнопкой → Create → Table. На вкладке General введите users, затем откройте Columns.'
         : 'В phpMyAdmin выберите базу слева. В блоке «Создать таблицу» введите users и укажите 7 столбцов. Нажмите «Создать».',
-      'Создайте id типа INTEGER. Отметьте первичный ключ и автоназначение: Identity в PostgreSQL или A_I в MySQL.',
+      pg ? 'Добавьте строку id, выберите тип serial и отметьте Primary key. serial создаёт целочисленный столбец, а последовательность автоматически выдаёт номер.' : 'Добавьте id типа INT. В колонке «Индекс» выберите PRIMARY, затем отметьте A_I. Согласитесь с выбором ключа, если откроется окно индекса.',
       'Добавьте login и password_hash. Тип обоих полей — VARCHAR. Длина login равна 64, длина password_hash — 255.',
       'Тем же способом добавьте full_name длиной 150, phone длиной 16, email длиной 254 и role длиной 8. У всех четырёх тип VARCHAR.',
       'Отметьте «NOT NULL» или снимите «NULL» у каждого поля. Для role задайте значение по умолчанию user. В PostgreSQL введите user в одинарных кавычках.',
-      pg ? 'На вкладке Constraints → Unique добавьте ограничение на login, затем нажмите Save.'
-        : 'Для login в колонке «Индекс» выберите UNIQUE. Для role задайте значение по умолчанию user и нажмите «Сохранить».',
-      'Откройте «Структура» или Columns и Constraints. Сверьте типы и ограничения с SQL из карточки.'
+      pg ? 'На вкладке Constraints → Unique добавьте строку uq_users_login. В Definition выберите login в списке столбцов и нажмите Save.'
+        : 'Для login в колонке «Индекс» выберите UNIQUE. В окне «Добавить индекс» введите uq_users_login и нажмите «Вперёд». У role выберите тип значения «Как определено» и введите user, затем сохраните таблицу.',
+      'Откройте «Структура» или Columns и Constraints. Сверьте семь имён, типы, длины, ключ id и уникальный login.'
     ],
     relations: [
       'Создайте applications. Поля: id INTEGER с первичным ключом и автоназначением, user_id INTEGER, course VARCHAR(180), start_date DATE, payment VARCHAR(12), status VARCHAR(16). Значение status по умолчанию — new.',
-      'Создайте reviews. Поля: id INTEGER с первичным ключом и автоназначением, application_id INTEGER, body TEXT. Сделайте поля обязательными.',
-      pg ? 'В свойствах applications откройте Constraints → Foreign Key и нажмите «+». В Columns выберите user_id слева, users и id справа. Добавьте связь и сохраните.'
-        : 'Откройте applications → «Структура» → «Связи». В блоке внешнего ключа выберите user_id и целевые users → id. Сохраните.',
-      'Тем же способом свяжите reviews.application_id с applications.id. В обеих связях проверьте, что поля имеют одинаковый тип. В Designer или ERD должны появиться две линии.'
+      'Создайте reviews. Поля: id INTEGER с первичным ключом и автоназначением, application_id INTEGER, body TEXT. Все поля applications и reviews обязательны. Для id обеих таблиц повторите настройку id в users.',
+      pg ? 'В свойствах applications откройте Constraints → Foreign Key и нажмите «+». Введите fk_applications_user. В Columns выберите user_id, public.users и id, затем нажмите Add. На вкладке Action выберите RESTRICT для On update и On delete и сохраните.'
+        : 'Откройте applications → «Структура» → «Связи». В блоке внешнего ключа выберите user_id и целевые users → id. Для ON DELETE и ON UPDATE выберите RESTRICT. Сохраните.',
+      'Тем же способом свяжите reviews.application_id с applications.id. Поля связи должны быть одного целочисленного типа. В Designer или ERD проверьте, что видны две линии.'
     ],
     register: [
       `Вставьте ветку register из карточки в свой серверный файл. В public/portal.js найдите форму register. Сверьте подписи и имена: login, password, full_name, phone, email. Нажатие кнопки отправляет эти поля обработчику.`,

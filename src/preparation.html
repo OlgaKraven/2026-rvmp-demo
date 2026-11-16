@@ -39,11 +39,11 @@
   </section>
   <section id="php">
     <h2>PHP без интернета</h2>
-    <p>В XAMPP нужны расширения <code>pdo_mysql</code> и <code>mbstring</code>. Проверьте их командой <code>&amp; C:\xampp\php\php.exe -m</code>. При необходимости включите их в <code>C:\xampp\php\php.ini</code> и перезапустите Apache. Пример использует стандартные расширения PHP, поэтому Composer не требуется.</p>
+    <p>В XAMPP нужны расширения <code>pdo_mysql</code> и <code>mbstring</code>. Проверьте их командой <code>&amp; C:\xampp\php\php.exe -c C:\xampp\php\php.ini -m</code>. При необходимости включите их в <code>C:\xampp\php\php.ini</code> и перезапустите Apache. Пример использует стандартные расширения PHP, поэтому Composer не требуется.</p>
     <p>Скопируйте <code>config.example.json</code> в <code>config.local.json</code> рядом с <code>public</code>. Укажите порт и реквизиты новой базы. В PowerShell из папки проекта выполните:</p>
     <pre><code>$env:RVMP_PHP_CONFIG = (Resolve-Path .\config.local.json).Path
-&amp; C:\xampp\php\php.exe -S 127.0.0.1:8211 -t public</code></pre>
-    <p>Откройте <code>http://127.0.0.1:8211</code>. Если используете Apache из XAMPP, сохраните настройки подключения в <code>C:\xampp\rvmp-php-config.json</code> вне общедоступной папки. Порядок запуска через Apache есть в <code>Порядок работы.md</code> внутри ZIP.</p>
+&amp; C:\xampp\php\php.exe -c C:\xampp\php\php.ini -S 127.0.0.1:8211 -t public</code></pre>
+    <p>Откройте <code>http://127.0.0.1:8211</code>. Если используете Apache из XAMPP, сохраните настройки подключения в <code>C:\xampp\rvmp-php-config.json</code> вне общедоступной папки. Порядок запуска через Apache есть в <code>README.md</code> внутри ZIP.</p>
   </section>
   <section id="faq">
     <h2>ЧаВО об экзамене</h2>

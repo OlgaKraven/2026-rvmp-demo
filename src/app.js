@@ -164,6 +164,10 @@ const mockVariant = () => D.practiceVariants[variantId];
 const S=()=>D.stages[stack],current=()=>S().find(s=>s.id===stage);
 const key=()=>`${stack}:${mode}:${mode==='mock'?variantId:'sample'}`;
 const stepKey=(id=stage)=>`step:${stack}:${id}`;
+function applyStepLink(query) {
+  const step=Number(query.get('step'));
+  if(mode==='learn'&&learningView==='steps'&&Number.isInteger(step)&&step>=1&&step<=current().steps.length){set(stepKey(),step-1);}
+}
 function savedStep(lesson) { return get(stepKey(lesson.id)); }
 
 const stepIndex=(lesson=current())=>Math.min(Math.max(0,savedStep(lesson)??0),lesson.steps.length);
@@ -182,6 +186,7 @@ function lessonActions(actions, withEr) {
 function explain(step, withEr) {
   const resources = (step.resources || []).map(resource => {
     if (resource === 'kim') return `<li>${link('КИМ · стр. 32', 'materials/kim-2026.pdf#page=32')}</li>`;
+    if (resource === 'installation') return `<li><a href="learning-preparation.html#${E(stack)}">Что скачать и как установить для этого стека</a></li>`;
     if (resource === 'archive') return '<li><a href="materials/sample.zip" download>Приложения · ZIP</a></li>';
     if (resource === 'drawio') return `<li>${link('Открыть draw.io','https://app.diagrams.net/')}</li>`;
     const file = D.previews.find(item=>item.name===resource);
@@ -332,7 +337,7 @@ function lessonBrief(lesson) {
 return `
 
     ${conditionText(original.paragraphs)}
-    ${lesson.id==='M1'?`<p><a href="learning-preparation.html#${stack==='mysql'?'php':'python'}">Библиотеки и запуск без интернета</a></p>`:''}
+    ${lesson.id==='M1'?`<p><a href="learning-preparation.html#${E(stack)}">Библиотеки и запуск без интернета</a></p>`:''}
     <section class="task-files"><h3>Приложения</h3>
       <ul><li>${assignmentAttachment(taskIndex,original.attachment)}</li>
         </ul>
@@ -472,7 +477,7 @@ function taskSpent(clock,used) {
   return (clock.spent[task] || 0) + Math.max(0,used-clock.anchor);
 }
 function selectPracticeTask(next) {
-  if (mode === 'training' && next !== task) {
+  if (next !== task) {
     const clock = taskClock(), used = Math.min(timer().durationMs,C.timerView(timer()).used);
     clock.spent[task] = taskSpent(clock,used);
     clock.anchor = used;
@@ -524,10 +529,10 @@ function timerBox() {
     <div class="training-timer-top">
       <span class="eyebrow">${training?'ТРЕНИРОВКА':'ПРОБНЫЙ ЭКЗАМЕН'}</span>
       ${clock}${status}${progress}
-      ${training?`<div class="timer-task">
+      <div class="timer-task">
         <span id="task-clock-label">Время на задание ${task+1}</span>
         <output id="task-clock" aria-labelledby="task-clock-label" aria-live="off"></output>
-      </div>`:''}
+      </div>
     </div>
     <div class="training-timer-controls">
       ${mainAction}
@@ -541,8 +546,7 @@ function timerBox() {
 }
 function resetAttempt(){for(const t of D.tasks){for(let i=0;i<t.checks.length+(mockVariant()?.checks[t.id]?.length??0);i++)del('check:'+key()+':'+t.id+':'+i);del('notes:'+key()+':'+t.id);}if(mode==='training'){
  for(let i=0;i<D.tasks.length;i++)del('task-done:'+key()+':'+i);
- del('task-clock:'+key());
-}set('timer:'+key(),C.freshTimer(D.official.minutes*60,mode));set('task:'+key(),0);render();}
+}del('task-clock:'+key());set('timer:'+key(),C.freshTimer(D.official.minutes*60,mode));set('task:'+key(),0);render();}
 function attemptNotice(){const t=timer();if(t.status==='paused')return '<section class="pause-screen" aria-labelledby="pause-title" tabindex="-1"><h2 id="pause-title">Тренировка на паузе</h2><p>Отсчёт остановлен. Условия и отметки снова появятся после продолжения.</p></section>';if(t.status==='finished')return `<section class="attempt-result" role="status"><h2>${C.timerView(t).expired?'Время вышло':'Попытка завершена'}</h2><p>Отметки самопроверки сохранены.</p></section>`;return '';}
 
 function practice() {
@@ -623,7 +627,8 @@ function examples() {
         </div>
         <h3>Проверьте запуск готового примера</h3>
         <p>Распакуйте ZIP, импортируйте <code>database-filled.sql</code> в пустую базу и заполните <code>config.local.json</code>. Подробнее в инструкции рядом с ZIP.</p>
-        <p>Откройте портал, войдите как <code>student01</code> и <code>Admin</code> и проверьте заявки под обеими ролями.</p>
+        <p>Откройте README.md из архива, запустите портал, войдите как <code>student01</code> и <code>Admin</code> и проверьте заявки под обеими ролями.</p>
+        ${shot({shot:'ready-login'},false,true,activeStack)}
       </article>
       <article class="route-panel">
         <h2>Внутри проекта</h2>
@@ -654,15 +659,18 @@ function criteria() {
 }
 function teacher(){
   return `<section class="training-page">
-    ${header('Преподавателю','Разбор задания «Корочки.есть» на Python Flask + MySQL / MariaDB.')}
+    ${header('Преподавателю','Разбор двух модулей задания «Корочки.есть».')}
     <article class="route-panel">
       <h2>Демонстрационный экзамен 2026</h2>
-      <p>Базовый уровень, два модуля по 90 минут. В презентации собраны условия, действия в Windows и проверка результата.</p>
+      <p>Базовый уровень, два модуля по 90 минут. Выберите презентацию для стека группы.</p>
       <p>В презентации откройте «Ещё», чтобы заполнить данные преподавателя. «Режим показа» открывает отдельное окно для аудитории. Двойной щелчок по слайду в этом окне включает полный экран.</p>
-      <div class="button-row">
-        <a class="btn primary" id="deck-open" href="presentation.html">Открыть презентацию</a>
-        <a class="btn" href="materials/rvmp-2026-presentation.pdf" download>Скачать PDF</a>
-      </div>
+      ${Object.entries(D.stacks).map(([stack,{name}])=>`<section aria-label="${E(name)}">
+        <h3>${E(name)}</h3>
+        <div class="button-row">
+          <a class="btn primary" href="presentation.html?stack=${E(stack)}" aria-label="Открыть презентацию · ${E(name)}">Открыть презентацию</a>
+          <a class="btn" href="materials/rvmp-2026-presentation${stack==='python-mysql'?'':'-'+E(stack)}.pdf" aria-label="Скачать PDF · ${E(name)}" download>Скачать PDF</a>
+        </div>
+      </section>`).join('')}
     </article>
   </section>`;
 }
@@ -898,7 +906,7 @@ function tour(){
   step('mock','Выполните задания и проверьте себя','Выберите задание в списке. Откройте его файлы под условием и отметьте выполненные пункты самопроверки.','.stage-nav [data-task]'),
   step('examples','Примеры · выберите стек и скачайте материалы','Выберите PHP или Flask. Архив, схема базы и фрагменты кода откроются для выбранного стека.','.example-stacks'),
   step('examples','Посмотрите исходный код','Нажмите название нужного файла. В окне можно прочитать и скопировать весь код. Сохраняйте исходные имена и пути файлов.','#example-file'),
-  step('teacher','Преподавателю · подготовьте занятие','Заполните данные преподавателя и откройте презентацию. Разбор показан на Flask с MySQL или MariaDB.','#deck-open')
+  step('teacher','Преподавателю · подготовьте занятие','Выберите презентацию для своего стека. Заполните данные преподавателя и откройте окно показа.','a[href^="presentation.html?stack="]')
  ];
  let i=0;
  const d=modal('Тур по сайту');
@@ -979,14 +987,12 @@ function tick(){
  const status=t.status==='finished'?(v.expired?'Время истекло':'Завершено'):({idle:'Готов к началу',running:'Идёт отсчёт',paused:'На паузе'})[t.status];
  const statusNode=document.getElementById('timer-status');
  if(statusNode.textContent!==status)statusNode.textContent=status;
- if(mode==='training'){
-   const clock=taskClock(), left=D.tasks[task].minutes*60000-taskSpent(clock,Math.min(v.used,t.durationMs));
-   document.getElementById('task-clock').textContent=left<=0?'Время вышло':C.format(left);
-   if(left<=0&&t.status==='running'&&!clock.alerted[task]){
-     clock.alerted[task]=true;
-     set('task-clock:'+key(),clock);
-     signalTimer();
-   }
+ const clock=taskClock(), left=D.tasks[task].minutes*60000-taskSpent(clock,Math.min(v.used,t.durationMs));
+ document.getElementById('task-clock').textContent=left<=0?'Время вышло':C.format(left);
+ if(mode==='training'&&left<=0&&t.status==='running'&&!clock.alerted[task]){
+   clock.alerted[task]=true;
+   set('task-clock:'+key(),clock);
+   signalTimer();
  }
 }
 function bind(){root.querySelectorAll('[data-mode]').forEach(button=>button.onclick=()=>{
@@ -1036,7 +1042,7 @@ root.querySelectorAll('[data-example-stack]').forEach(button=>button.onclick=()=
 on('example-launch',openExampleInstructions);
 root.querySelectorAll('[data-example-file]').forEach(button=>button.onclick=()=>{
  const file = button.dataset.exampleFile;
- if(file.endsWith('/Порядок работы.md')) openExampleInstructions();
+ if(file.endsWith('/README.md')) openExampleInstructions();
  else fileModal(file,selectedExampleStack());
 });
 on('training-sample',showTrainingSample);
@@ -1052,7 +1058,8 @@ on('theme',()=>{dark=!dark;set('dark',dark);render();document.getElementById('th
 }
 function pageUrl(pageMode) {
  const examples = pageMode==='examples' ? '&exampleStack='+selectedExampleStack() : '';
- return '?section=work&mode='+pageMode+'&module='+stage+'&stack='+stack+'&view='+learningView+examples+(pageMode==='mock'?'&variant='+variantId:'');
+ const sharedStep=pageMode==='learn'&&learningView==='steps'?'&step='+(stepIndex()+1):'';
+ return '?section=work&mode='+pageMode+'&module='+stage+'&stack='+stack+'&view='+learningView+sharedStep+examples+(pageMode==='mock'?'&variant='+variantId:'');
 }
 function render({preserveScroll=true}={}){const previousScroll=window.scrollY;task=Math.min(D.tasks.length-1,Math.max(0,get('task:'+key(),0)));document.body.classList.toggle('dark',dark);if(!document.querySelector('.tour-dialog[open]')){set('stage',stage);
   if(mode==='learn'&&isLessonView(learningView)){
@@ -1099,6 +1106,7 @@ window.addEventListener('popstate',()=>{
  if (mode==='mock') {variantId=validVariant(q.get('variant'));}
  stage=S().some(s=>s.id===q.get('module'))?q.get('module'):'documents';
  learningView=isLessonView(q.get('view'))?q.get('view'):'map';
+ applyStepLink(q);
  render();
 });
 window.addEventListener('keydown',event=>{
@@ -1111,6 +1119,7 @@ window.addEventListener('keydown',event=>{
  event.preventDefault();
  goToStep(next);
 });
+applyStepLink(p);
 render();
 if(location.hash==='#criteria')document.getElementById('criteria')?.scrollIntoView();
 setInterval(tick,1000);

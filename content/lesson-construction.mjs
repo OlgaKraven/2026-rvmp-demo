@@ -5,7 +5,6 @@ export function lessonConstruction(stack, sources, descriptions) {
   const code = name => sources[prefix+name];
   const server = php ? 'public/api.php' : 'portal.py';
   const script = 'public/portal.js';
-  const db = 'schema.sql';
   const block = (file, placement, text=code(file), purpose=descriptions[prefix+file]) => ({file,placement,text,purpose});
   const range = (text, start, end) => {
     const from = start == null ? 0 : text.indexOf(start);
@@ -34,8 +33,16 @@ export function lessonConstruction(stack, sources, descriptions) {
         'config.local.json\n.venv/\n__pycache__/\nwheels/\n.vs/\n',
         'Локальные реквизиты, библиотеки и служебные папки исключаются из истории Git.')
     ],
-    users:[block(db,'Сверьте команду с SQL в конструкторе. Если создаёте таблицу запросом, выполните его во вкладке SQL или Query Tool один раз.',range(code(db),null,'CREATE TABLE applications').trim(),'Первичный ключ различает записи, уникальный login запрещает повторную регистрацию.')],
-    relations:[block(db,'Для создания через SQL выполните команды в своей базе после создания users. Если таблицы уже созданы в конструкторе, сверяйте команды с их структурой.',range(code(db),'CREATE TABLE applications',null).trim(),'Первая связь назначает владельца заявки, вторая связывает отзыв с заявкой.')],
+    git:[block('PowerShell','Выполните в пустом локальном репозитории или в выданном клоне. Строку git init в клоне пропустите.',
+      [
+        'git init -b main',
+        'git config --local user.name "Ваше имя"',
+        'git config --local user.email "student@example.test"',
+        'git add -- .gitignore',
+        'git commit -m "М1 — начало работы"',
+        'git log -1 --oneline'
+      ].join('\n'),
+      'Локальные имя и почта относятся только к этому проекту. Первый коммит фиксирует правила исключения реквизитов и зависимостей.')],
     connect:[
       block(config,'Создайте файл настроек. Замените реквизиты на выданные, сохраните как JSON.',code('config.example.json').replace('"module": 2','"module": 1'),descriptions[prefix+'config.example.json']),
       block('courses.json','Создайте рядом с серверным файлом в корне проекта и вставьте массив целиком.'),
@@ -51,7 +58,7 @@ export function lessonConstruction(stack, sources, descriptions) {
           'Flask отдаёт страницу и JSON. При GET соединение читает данные, при POST сессия и транзакция защищают изменения.'),
       ...(start?[block('PowerShell','В PowerShell из папки проекта выполните команды после распаковки библиотеки wheel. Последней командой перезапускайте сервер после правки.',start,'Виртуальное окружение отделяет зависимости проекта от остальных приложений.')]:[]),
       block('Браузер','Откройте адрес из карточки, заменив окончание на '+apiAddress+'. В ответе API ожидаются поля user, rows и csrf.',
-        php?'http://localhost:8080/rvmp-php/public/api.php':'http://127.0.0.1:'+(stack==='postgresql'?8212:8213)+'/api',
+        php?'http://localhost/rvmp-php/public/api.php':'http://127.0.0.1:'+(stack==='postgresql'?8212:8213)+'/api',
         'Ответ JSON подтверждает, что сервер работает с заданными реквизитами.')
     ],
     form:[

@@ -6,26 +6,59 @@
 <style>
   body { max-width: 60rem; margin: 2rem auto; padding: 0 1.25rem; font: 1rem/1.65 system-ui, sans-serif; color-scheme: light dark; }
   section { margin-block: 2rem; }
-  pre { white-space: pre-wrap; }
+  figure { margin: 1rem 0; }
+  figure img { max-width: 100%; height: auto; }
   code { overflow-wrap: anywhere; }
   summary { cursor: pointer; font-weight: 600; }
 </style>
 <main>
   <h1>0. Установка и настройка программ</h1>
-  <ol>
-    <li>Скачайте <a href="https://update.code.visualstudio.com/latest/win32-x64-user/stable">VS Code для Windows x64</a> и <a href="https://git-scm.com/install/windows">Git for Windows</a>. Разрешите запуск Git из командной строки. В новом окне PowerShell выполните <code>git --version</code>.</li>
-    <li>Если выбрали PHP или Flask с MySQL, скачайте <a href="https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe/download">XAMPP для Windows</a>. Включите Apache и MySQL (MariaDB) в XAMPP Control Panel и откройте <code>http://localhost/phpmyadmin</code>. Запишите фактический порт MySQL, обычно 3306.</li>
-    <li>Если выбрали Flask с PostgreSQL, скачайте <a href="https://www.postgresql.org/download/windows/">PostgreSQL с pgAdmin для Windows</a>. В установщике оставьте PostgreSQL Server и pgAdmin. Запишите пароль <code>postgres</code> и порт, обычно 5432. Проверьте подключение к локальному серверу в pgAdmin.</li>
-    <li>Для обоих вариантов Flask скачайте <a href="https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe">Python 3.12 для Windows x64</a>. Включите Python Launcher и pip. Проверьте <code>py -3.12 --version</code>. Пакеты <code>wheels</code> из ZIP подготовлены для этой версии и архитектуры.</li>
-    <li>Для ER скачайте <a href="https://github.com/jgraph/drawio-desktop/releases/latest">diagrams.net Desktop</a> (Windows installer) или используйте ERD Tool в pgAdmin либо Designer в phpMyAdmin. Проверьте экспорт в PDF и распакуйте ZIP целиком через «Извлечь всё».</li>
-  </ol>
-  <section id="python">
-    <h2>Подготовьте библиотеки Flask</h2>
-    <p>Скачайте пакет библиотек для Python 3.12 x64 <a href="downloads/wheels-python-mysql.zip" download>для MySQL</a> или <a href="downloads/wheels-postgresql.zip" download>для PostgreSQL</a>. Распакуйте в свою папку проекта, сохранив имя <code>wheels</code>. Создайте свой <code>requirements.txt</code> по карточке подключения и выполните команды PowerShell из этой карточки.</p>
+  <p>Скачайте установщики и архив библиотек до отключения от интернета. Откройте раздел своего стека и выполните его шаги.</p>
+  <ul>
+    <li><a href="#mysql">PHP + MySQL / MariaDB</a></li>
+    <li><a href="#postgresql">Python Flask + PostgreSQL</a></li>
+    <li><a href="#python-mysql">Python Flask + MySQL</a></li>
+  </ul>
+  <section id="editor">
+    <h2>Редактор и Git для всех трёх стеков</h2>
+    <ol>
+      <li>Скачайте <a href="https://update.code.visualstudio.com/latest/win32-x64-user/stable">VS Code · Windows x64 User Installer</a> и запустите установщик. После установки выберите «Файл → Открыть папку» и «Терминал → Создать терминал».</li>
+      <li>На странице <a href="https://git-scm.com/install/windows">Git for Windows</a> выберите Standalone Installer → x64 Setup. В установщике разрешите использовать Git в командной строке и сторонних программах. В новом PowerShell выполните <code>git --version</code>.</li>
+      <li>Откройте карточку «Настройте Git и сделайте начальный коммит». Используйте свои учебные имя и почту. Сделайте первый коммит в папке проекта.</li>
+    </ol>
   </section>
-  <section id="php">
-    <h2>Проверьте PHP и MySQL</h2>
-    <p>В XAMPP запустите MySQL и Apache. В <code>C:\xampp\php\php.ini</code> убедитесь, что включены расширения <code>pdo_mysql</code> и <code>mbstring</code>. После изменения настроек перезапустите Apache. На этапе подключения создайте свои файлы по карточке и разместите их в проекте <code>C:\xampp\htdocs\rvmp-php</code>. Файл реквизитов храните в <code>C:\xampp\rvmp-php-config.json</code>.</p>
+  <section id="mysql">
+    <h2>PHP + MySQL / MariaDB</h2>
+    <ol>
+      <li>Скачайте <a href="https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe/download">проверенный установщик XAMPP 8.2.12 x64</a>. В установщике оставьте Apache, MySQL, PHP и phpMyAdmin. Укажите <code>C:\xampp</code>.</li>
+      <li>Откройте XAMPP Control Panel и нажмите Start у Apache и MySQL. Запишите значения из Port(s). Для стандартного порта Apache откройте <code>http://localhost/phpmyadmin</code>. Если Apache слушает другой порт, добавьте его после <code>localhost:</code>.</li>
+      <li>В PowerShell запустите <code>&amp; C:\xampp\php\php.exe -c C:\xampp\php\php.ini -m</code>. Найдите в списке <code>pdo_mysql</code> и <code>mbstring</code>. При необходимости включите эти расширения в <code>C:\xampp\php\php.ini</code> и перезапустите Apache. Composer для проекта не нужен.</li>
+    </ol>
+    <figure><img src="materials/windows/mysql/installation.png" alt="XAMPP Control Panel с работающими Apache и MySQL"><figcaption>Зелёные строки Apache и MySQL означают, что службы запущены. Номер порта базы на снимке относится к учебному стенду.</figcaption></figure>
+  </section>
+  <section id="postgresql">
+    <h2>Python Flask + PostgreSQL</h2>
+    <ol>
+      <li>Скачайте <a href="https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe">Python 3.12 · Windows installer (64-bit)</a>. В установщике сохраните компоненты pip и Python Launcher. Откройте PowerShell, выполните <code>py -3.12 --version</code>.</li>
+      <li>На странице <a href="https://www.postgresql.org/download/windows/">PostgreSQL для Windows</a> выберите Download the installer, затем PostgreSQL 18 для Windows x86-64. Оставьте PostgreSQL Server и pgAdmin. Задайте пароль роли postgres и запишите выбранный порт (обычно 5432).</li>
+      <li>В pgAdmin выберите Add New Server. В General задайте имя подключения. В Connection укажите Host name/address <code>127.0.0.1</code>, свой порт, пользователя и пароль. Нажмите Save и проверьте появление Databases.</li>
+      <li>Скачайте <a href="downloads/wheels-postgresql.zip" download>библиотеки Flask и psycopg для Windows x64 · ZIP</a>. Распакуйте <code>wheels</code> в корень своего проекта. В карточке «Проверьте подключение» создайте <code>requirements.txt</code> и установите пакеты из этого каталога.</li>
+    </ol>
+    <figure><img src="materials/windows/postgresql/installation.png" alt="Вкладка Connection в pgAdmin с полями адреса, порта и роли"><figcaption>Адрес, порт и пользователь из подключения нужны затем в файле настроек проекта.</figcaption></figure>
+  </section>
+  <section id="python-mysql">
+    <h2>Python Flask + MySQL</h2>
+    <ol>
+      <li>Скачайте <a href="https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe">Python 3.12 · Windows installer (64-bit)</a>. Оставьте компоненты pip и Python Launcher, выполните в PowerShell <code>py -3.12 --version</code>.</li>
+      <li>Установите <a href="https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe/download">XAMPP 8.2.12 x64</a>. Включите Apache и MySQL в панели XAMPP. Откройте phpMyAdmin с порта Apache и запишите порт MySQL для Flask.</li>
+      <li>Скачайте <a href="downloads/wheels-python-mysql.zip" download>библиотеки Flask и MySQL Connector/Python · ZIP</a>. Распакуйте <code>wheels</code> в корень своего проекта. В карточке «Проверьте подключение» создайте <code>requirements.txt</code> и установите пакеты из этого каталога.</li>
+    </ol>
+    <figure><img src="materials/windows/python-mysql/installation.png" alt="Вкладка баз данных в phpMyAdmin"><figcaption>Через phpMyAdmin вы будете создавать базу и таблицы. Сам портал Flask запускается отдельно в терминале.</figcaption></figure>
+  </section>
+  <section id="python">
+    <h2>Установка библиотек Flask без интернета</h2>
+    <p>Откройте PowerShell из корня проекта. Создайте окружение командой <code>py -3.12 -m venv .venv</code>. Выполните <code>.\.venv\Scripts\python.exe -m pip install --no-index --find-links .\wheels -r requirements.txt</code>. Параметр <code>--no-index</code> отключает поиск на PyPI. Команда <code>.\.venv\Scripts\python.exe -m pip check</code> проверяет, что все нужные пакеты установлены.</p>
+    <p>Если расширение Python для VS Code уже установлено, в команде Python: Select Interpreter можно указать <code>.venv\Scripts\python.exe</code>. Команды в карточках работают из PowerShell сразу после установки Python.</p>
   </section>
   <section id="faq">
     <h2>ЧаВО об экзамене</h2>

@@ -769,7 +769,7 @@ body.dark .pause-symbol { color: var(--red); }
 .sheet-table [data-align="center"] { text-align: center; }
 .sheet-table [data-align="right"] { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 
-.lesson-brief p { max-width: 69ch; margin: 0 0 14px; overflow-wrap: anywhere; }
+.lesson-brief p { margin: 0 0 14px; overflow-wrap: anywhere; }
 .lesson-brief .task-source { margin-top: 14px; }
 .condition-text {
   max-width: 70ch;
@@ -780,6 +780,7 @@ body.dark .pause-symbol { color: var(--red); }
   overflow-wrap: anywhere;
   text-wrap: pretty;
 }
+.lesson-brief .condition-text { max-width: none; }
 .condition-text > :is(p,ul) { margin: 0 0 12px; }
 .condition-text > :last-child { margin-bottom: 0; }
 .condition-text ul { padding-inline-start: 1.35em; }

@@ -91,7 +91,10 @@ async function load() {
     state = data;
     module = data.module;
     $('slider').hidden = module === 1;
-    if (module === 2 && !cycle) restartSlider();
+    if (module === 2 && !cycle) {
+      moveSlide(0);
+      restartSlider();
+    }
     render();
   } catch (error) {
     message(error.message || 'Проверьте запуск сервера и соединение с базой.',true);

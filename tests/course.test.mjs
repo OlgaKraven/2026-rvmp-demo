@@ -74,16 +74,33 @@ test('Flask and MySQL use the Python connector, MySQL schema and their own guide
   assert.ok(fs.statSync('site/downloads/example-'+stack+'.zip').size>0);
 });
 
-test('the teacher deck contains every Flask/MySQL step and its Windows screenshot',()=>{
+test('each stack publishes its own student deck, installation, and complete example archive',()=>{
   const slides = {};
   vm.runInNewContext(fs.readFileSync('site/presentation-data.js','utf8'),slides);
-  const deck = slides.EXAM_PRESENTATION;
-  const steps = course.stages['python-mysql'].flatMap(stage=>stage.steps);
-  for(const [index,step] of steps.entries()){
-    const pages = deck.filter(slide=>slide.step===index+1);
-    assert.deepEqual(Array.from(pages.flatMap(slide=>slide.actions)),Array.from(step.actions));
-    assert.ok(fs.existsSync('site/'+pages[0].image.file),step.title);
-    assert.equal(pages.at(-1).check,step.check);
+  assert.deepEqual(Object.keys(slides.EXAM_PRESENTATIONS),Object.keys(course.stacks));
+  const prep = fs.readFileSync('site/learning-preparation.html','utf8');
+  assert.doesNotMatch(prep,/как подать апелляцию|письменную апелляцию/i);
+  for(const [stack,presentation] of Object.entries(slides.EXAM_PRESENTATIONS)){
+    const stages = course.stages[stack];
+    assert.equal(stages[0].steps[0].title,'Установка и настройка программ');
+    assert.ok(prep.includes('<section id="'+stack+'">'));
+    assert.match(course.lessonCode[stack].git[0].text,/git commit/);
+    assert.ok(!Object.hasOwn(course.lessonCode[stack],'users'));
+    assert.ok(!Object.hasOwn(course.lessonCode[stack],'relations'));
+    const steps = stages.flatMap(stage=>stage.steps);
+    for(const [index,step] of steps.entries()){
+      const pages = presentation.slides.filter(slide=>slide.step===index+1);
+      assert.deepEqual(Array.from(pages.flatMap(slide=>slide.actions)),Array.from(step.actions));
+      assert.ok(fs.existsSync('site/'+pages[0].image.file),step.title);
+      assert.equal(pages.at(-1).check,step.check);
+      assert.ok(pages.every(page=>page.note));
+      if (step.build) assert.match(pages[0].lesson,new RegExp('stack='+stack+'(?:&|$)'));
+    }
+    assert.equal(fs.readFileSync('site/'+presentation.pdf).subarray(0,5).toString(),'%PDF-');
+    const archive = fs.readFileSync('site/downloads/example-'+stack+'.zip');
+    for(const name of ['README.md','database-filled.sql','config.example.json','public/portal.js']) {
+      assert.ok(archive.includes(Buffer.from(name)),name+' · '+stack);
+    }
+    if(stack!=='mysql')assert.ok(archive.includes(Buffer.from('wheels/')));
   }
-  assert.equal(fs.readFileSync('site/materials/rvmp-2026-presentation.pdf').subarray(0,5).toString(),'%PDF-');
 });

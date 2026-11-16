@@ -87,7 +87,7 @@ function mount(workspace, ctx) {
 
   function detail(){const s=current();if(s.kind==='intro')return '<h3>Требования модуля 1 · ДЭ 2026</h3><p class="er-origin">КИМ '+E(root.ER_GUIDE.source.code)+'</p><p>Выберите этап построения, чтобы увидеть, из какого документа взято поле и как оно связано с другими таблицами.</p><ul class="er-source-list">'+root.ER_GUIDE.source.files.map(file=>'<li>'+sourceLink(file)+'</li>').join('')+'</ul>';
    if(s.kind==='report')return '<h3>Как модель разделяет данные?</h3><p>'+E(root.ER_GUIDE.report.why)+'</p>'+sourceLink(root.ER_GUIDE.report.file)+'<p>Источник: '+E(root.ER_GUIDE.report.location)+'</p>';
-   if(s.kind==='finish')return '<h3>От схемы к реализации</h3><ol><li>Создайте три таблицы в учебной базе и проверьте первичные и внешние ключи.</li><li>Откройте схему средствами своей СУБД и убедитесь, что видны обе связи.</li><li>Сохраните структуру базы и диаграмму вместе с исходниками.</li></ol><p><a href="examples/'+ctx.stack+'/schema.sql" download>SQL для сверки · '+E(ctx.stack)+'</a></p>';
+   if(s.kind==='finish')return '<h3>От схемы к реализации</h3><ol><li>Создайте три таблицы в учебной базе и проверьте первичные и внешние ключи.</li><li>Откройте схему средствами своей СУБД и убедитесь, что видны обе связи.</li><li>Сохраните структуру базы и диаграмму вместе с исходниками.</li></ol>';
    const table=D().tables.find(t=>t.id===s.table);
    if(s.kind==='table')return '<h3>Почему появилась таблица «'+E(table.title)+'»?</h3><p>'+E(table.why)+'</p><p>Имя в СУБД: <code>'+E(table.id)+'</code>.</p>';
    const field=table.fields.find(item=>item.id===s.field);

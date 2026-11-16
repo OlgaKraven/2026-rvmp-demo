@@ -1,14 +1,18 @@
 (() => {
   'use strict';
-  const slides = globalThis.EXAM_PRESENTATION;
   const escape = globalThis.ExamCore.escape;
   const query = new URLSearchParams(location.search);
+  const decks = globalThis.EXAM_PRESENTATIONS;
+  const stack = Object.hasOwn(decks,query.get('stack')) ? query.get('stack') : 'python-mysql';
+  const {slides,name,pdf} = decks[stack];
   const mode = query.has('print') ? 'print' : query.has('audience') ? 'audience' : 'teacher';
   const id = name => document.getElementById(name);
   const frame = id('frame');
   const number = id('page-number');
   const profile = id('profile');
   const prefix = 'rvmp2026-basic-v1:';
+  const pageKey = 'presentation-page:' + stack;
+  id('download-pdf').href = pdf;
   const profileFields = [
     ['teacher-name','ФИО преподавателя'],
     ['teacher-position','Должность'],
@@ -24,7 +28,7 @@
     catch { /* The presentation works without persistence. */ }
   }
 
-  let index = Math.max(0, Math.min(slides.length - 1, saved('presentation-page',0)));
+  let index = Math.max(0, Math.min(slides.length - 1, saved(pageKey,0)));
   let dark = mode !== 'print' && saved('presentation-dark',false);
   let identity = Object.fromEntries(profileFields.map(([key]) => [key, mode === 'print' ? '' : saved(key)]));
   let channel;
@@ -45,7 +49,7 @@
           <div>
             <h1>${escape(slide.title)}</h1>
             <p class="subtitle">Портал «Корочки.есть»</p>
-            <p class="subtitle">Python Flask + MySQL / MariaDB</p>
+            <p class="subtitle">${escape(name)}</p>
             <div class="identity" aria-label="Преподаватель">
               ${profileFields.map(([key,label])=>`<div class="identity-field"><span>${label}</span><span data-pdf-field="${key}">${escape(identity[key])}</span></div>`).join('')}
             </div>
@@ -74,7 +78,9 @@
         <h2>${escape(slide.title)}</h2>
         ${table || `<div class="slide-content${image ? ' with-image' : ''}"><div class="slide-copy">${actions}${result}</div>${image}</div>`}
       </div>
-      <footer class="slide-foot"><span>${escape(slide.source || label)}</span><span>${page}</span></footer>
+      <footer class="slide-foot"><span>${escape(slide.source || label)}</span>
+        ${slide.lesson && mode !== 'audience' ? `<a href="${mode==='print'?'https://olgakraven.github.io/2026-rvmp-demo/':'./'}${escape(slide.lesson)}">Открыть этот шаг в «Обучении»</a>` : ''}
+        <span>${page}</span></footer>
     </article>`;
   }
 
@@ -114,7 +120,7 @@
   }
   function move(position) {
     index = Math.max(0, Math.min(slides.length - 1, position));
-    save('presentation-page',index);
+    save(pageKey,index);
     draw();
     sendState();
   }
@@ -165,7 +171,7 @@
     const token = crypto.randomUUID();
     channel = new BroadcastChannel('rvmp-presentation:' + token);
     channel.onmessage = ({data}) => { if (data.type === 'ready') sendState(); };
-    audience = window.open('presentation.html?audience=' + token, 'rvmp-audience', 'popup,width=1080,height=670');
+    audience = window.open('presentation.html?stack=' + stack + '&audience=' + token, 'rvmp-audience', 'popup,width=1080,height=670');
     if (!audience) { endPresentation(); return; }
     id('presentation').classList.add('in-session');
     id('teacher-script').hidden = false;
